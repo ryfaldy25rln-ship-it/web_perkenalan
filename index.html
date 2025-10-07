@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Profile Dashboard - Bio Scrollable</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* === VARIABLES & BASE === */
+        :root {
+            --bg-dark: #0f1012;
+            --text-light: #e0e0e0;
+            --accent-blue: #00ffff;
+            --card-bg: rgba(30, 30, 35, 0.6);
+            --border-glow: rgba(0, 255, 255, 0.4);
+            --secondary-text: #aaa;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            overflow: hidden; 
+            height: 100vh;
+            position: relative;
+        }
+
+        /* === GLOBAL LAYOUT (Sama seperti sebelumnya) === */
+        .container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-rows: 80px 1fr 60px;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            background: rgba(30, 30, 35, 0.2);
+            backdrop-filter: blur(5px);
+            border-radius: 15px;
+            border: 1px solid rgba(0, 255, 255, 0.1);
+            z-index: 10;
+        }
+        .logo { font-size: 1.5em; color: var(--accent-blue); font-weight: 800; }
+        .user-profile i { margin-left: 10px; font-size: 1.2em; color: var(--accent-blue); }
+
+        /* === MAIN CONTENT (GRID) === */
+        main {
+            display: grid;
+            grid-template-columns: 200px 1fr 300px;
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        /* LEFT NAV */
+        .left-nav {
+            display: flex;
+            flex-direction: column;
+            padding: 20px 0;
+            background: rgba(30, 30, 35, 0.4);
+            border-radius: 10px;
+        }
+        .left-nav a {
+            color: var(--secondary-text);
+            text-decoration: none;
+            padding: 15px 20px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+        .left-nav a.active {
+            color: var(--accent-blue);
+            background-color: rgba(0, 255, 255, 0.1);
+            border-left: 4px solid var(--accent-blue);
+            font-weight: 600;
+        }
+
+        /* === MAIN CONTENT AREA (DYNAMIC & SCROLLABLE) === */
+        .content-area {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 30px;
+            /* PROPERTI PENTING UNTUK SCROLL */
+            overflow-y: auto; 
+            border: 1px solid rgba(0, 255, 255, 0.1);
+        }
+        /* Style scrollbar agar sesuai tema gelap */
+        .content-area::-webkit-scrollbar {
+            width: 8px;
+        }
+        .content-area::-webkit-scrollbar-track {
+            background: #222;
+        }
+        .content-area::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 4px;
+        }
+        .content-area::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-blue);
+        }
+        
+        .content-section {
+            display: none;
+            /* Pastikan elemen di dalamnya bisa mendorong scroll */
+            padding-bottom: 50px; 
+        }
+        .content-section.active {
+            display: block;
+        }
+        .content-area h2 {
+            font-size: 1.8em;
+            color: var(--accent-blue);
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+        }
+        
+        /* === CUSTOM STYLE: BIO & PROFIL === */
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+        }
+        .profile-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: url('https://picsum.photos/120/120?random=1&grayscale') center/cover; /* Ganti dengan URL Foto Anda */
+            border: 3px solid var(--accent-blue);
+            margin-right: 30px;
+            box-shadow: 0 0 10px var(--border-glow);
+        }
+        .profile-info h3 {
+            font-size: 1.8em;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+        .profile-info p {
+            color: var(--secondary-text);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        .data-table tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .data-table td {
+            padding: 10px 0;
+            font-size: 1em;
+        }
+        .data-table td:first-child {
+            width: 30%;
+            color: var(--secondary-text);
+            font-weight: 400;
+        }
+        .data-table td:last-child {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        /* --- Sisa CSS lainnya (Skill, Experience, dll) --- */
+        /* Pastikan semua style dari jawaban sebelumnya dimasukkan di sini */
+        .skill-item {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;
+        }
+        .skill-bar {
+            flex-grow: 1; height: 8px; background-color: #333; border-radius: 4px; margin-left: 20px; position: relative;
+        }
+        .skill-level {
+            height: 100%; background-color: var(--accent-blue); border-radius: 4px; transition: width 1s ease-out; box-shadow: 0 0 5px var(--border-glow);
+        }
+        .experience-card {
+            margin-bottom: 25px; padding-left: 15px; border-left: 3px solid var(--secondary-text);
+        }
+        .experience-card h3 { color: #fff; margin-bottom: 5px; font-size: 1.2em; }
+        .experience-card p { color: var(--secondary-text); font-size: 0.9em; margin-bottom: 10px; }
+        .experience-card ul { list-style: none; padding-left: 0; font-size: 0.85em; color: #ccc; }
+        .experience-card ul li:before { content: "•"; color: var(--accent-blue); font-weight: bold; display: inline-block; width: 1em; margin-left: -1em; }
+
+        /* RIGHT PANEL */
+        .right-panel {
+            display: flex; flex-direction: column; gap: 20px;
+        }
+        .stat-card {
+            background-color: var(--card-bg); padding: 20px; border-radius: 10px; border: 1px solid rgba(0, 255, 255, 0.1);
+        }
+        .stat-card .value { font-size: 2.5em; font-weight: 800; color: var(--accent-blue); text-shadow: 0 0 10px var(--border-glow); margin-bottom: 5px; }
+        .stat-card .label { font-size: 0.8em; color: var(--secondary-text); }
+        .contact-info p { font-size: 0.9em; margin-bottom: 10px; }
+        .contact-info i { color: var(--accent-blue); margin-right: 10px; }
+        
+        /* FOOTER */
+        footer {
+            display: flex; justify-content: center; align-items: center; background-color: rgba(0, 0, 0, 0.5); border-top: 1px solid rgba(0, 255, 255, 0.1); border-radius: 0 0 15px 15px;
+        }
+       
+        footer a {
+            color: var(--secondary-text); font-size: 1.5em; margin: 0 20px; transition: color 0.3s;
+        }
+        
+        footer a:hover {
+            color: var(--accent-blue);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">RIFALDINASARU.WEB</div>
+            <div class="user-profile">
+                Status: Available for Project
+                <i class="fas fa-check-circle"></i>
+            </div>
+        </header>
+
+        <main>
+            <nav class="left-nav">
+                <a href="#about" class="tab-link active" data-target="about-content">
+                    <i class="fas fa-user"></i> Bio & Profil
+                </a>
+                <a href="#skills" class="tab-link" data-target="skills-content">
+                    <i class="fas fa-code"></i> tentang saya
+                </a>
+                
+                <a href="#portfolio" class="tab-link" data-target="portfolio-content">
+                     <i class="fas fa-rocket"></i>  TUGAS
+                </a>
+                <a href="#contact" class="tab-link" data-target="contact-content">
+                    <i class="fas fa-envelope"></i> Kontak
+                </a>
+            </nav>
+
+            <div class="content-area">
+
+                <section id="about-content" class="content-section active">
+                    <h2>Bio & Data Diri</h2>
+                    
+                    <div class="profile-header">
+                        <div ><img src="foto.png" class="profile-photo" style="width:120px; height:auto;"></div>
+                        <div class="profile-info">
+                            
+                            <h3>[RIFALDI]</h3>
+                            <p>[MAHASISWA]</p>
+                        </div>
+                    </div>
+                    
+                    <table class="data-table">
+                        <tr>
+                            <td>Nama Lengkap</td>
+                            <td>[RIFALDI NASARU]</td>
+                        </tr>
+                        <tr>
+                            <td>Tempat, Tgl Lahir</td>
+                            <td>[KALUMBANGAN], [26-08-2004]</td>
+                        </tr>
+                        <tr>
+                            <td>Alamat Tinggal</td>
+                            <td>[DESA KALUMBANGAN,KEC.BUNTA,KAB.BANGGAI]</td>
+                        </tr>
+                        <tr>
+                            <td>Pendidikan</td>
+                            <td>[POLITEKNIK NEGERI MANADO]</td>
+                        </tr>
+                        <tr>
+                            <td>Jurusan/Program Studi</td>
+                            <td>[ELEKTO]/[TK]</td>
+                        </tr>
+                    </table>
+                    
+                    
+                </section>
+
+                <section id="skills-content" class="content-section">
+                    <h2 style="margin-top: 40px; border-bottom: none;">TENTANG SAYA</h2>
+                    <p style="font-size: 1.1em; line-height: 1.6; margin-bottom: 20px;">
+                        HELLO Saya bernama Rifaldi Nasaru, lahir di Kalumbangan pada tanggal 26 Agustus 2004. Saat ini saya tinggal di Desa Kalumbangan, Kecamatan Bunta, Kabupaten Banggai. Saya adalah seorang mahasiswa yang memiliki semangat tinggi dalam belajar dan terus berusaha mengembangkan kemampuan di bidang teknologi serta ilmu pengetahuan yang saya tekuni di bangku kuliah.
+                    </p>
+                    <p style="color: var(--secondary-text);">
+                        Saya menempuh pendidikan di Politeknik Negeri Manado, jurusan Teknik Elektro (TK). Ketertarikan saya terhadap dunia teknik dan teknologi membuat saya ingin memahami lebih dalam tentang sistem kelistrikan serta penerapannya dalam kehidupan modern. Bagi saya, menjadi mahasiswa Politeknik adalah kesempatan besar untuk belajar secara praktis dan siap menghadapi dunia kerja yang sesungguhnya.
+                    </p>
+                    
+                    <div style="height: 150px; background-color: #1a1a1a; margin-top: 30px; border: 1px solid #333; padding: 15px; font-size: 0.9em; color: var(--secondary-text);">
+                        [Placeholder Teks Panjang/Moto Pribadi untuk mengisi ruang dan mengaktifkan scroll. Isi dengan deskripsi yang lebih detail tentang ambisi karier Anda.]
+                </section>
+
+                <section id="portfolio-content" class="content-section">
+                    <h2>progress tugas</h2>
+                    <div style="background-color: #1e1e1e; padding: 20px; border-radius: 8px; margin-bottom: 15px;"><h3 style="color: var(--accent-blue); margin-bottom: 5px;">Project 01:pembuatan web data diri</h3><p style="font-size: 0.9em;"></p><a href="https://ryfaldy25rln-ship-it.github.io/satrianparfum/#" style="color: #fff; text-decoration: none; font-weight: 600;">Lihat Demo <i class="fas fa-link"></i></a></div>
+                    <div style="background-color: #1e1e1e; padding: 20px; border-radius: 8px;"><h3 style="color: var(--accent-blue); margin-bottom: 5px;">Project 02: pembuatan css</h3><p style="font-size: 0.9em;">Fitur: Real-time Data Visualization. (Tech: Vue.js, D3.js)</p><a href="#" style="color: #fff; text-decoration: none; font-weight: 600;">Lihat Demo <i class="fas fa-link"></i></a></div>
+                </section>
+                
+                <section id="contact-content" class="content-section">
+                    <h2>Hubungi Saya</h2>
+                    <p style="color: var(--secondary-text); margin-bottom: 30px;">Mari berkolaborasi dalam proyek Anda berikutnya. Saya selalu terbuka untuk peluang baru.</p>
+                    <div class="contact-info"><p><i class="fas fa-envelope"></i> Email: rifaldinasaru@gmail.com</p><p><i class="fas fa-phone-alt"></i> Telepon: 082296703477</p><p><i class="fab fa-linkedin"></i> LinkedIn: **linkedin.com/in**</p><!-- Ganti 62812... dengan nomormu -->
+<a href="https://wa.me/62812xxxxxxxx" target="_blank" 
+  Chat via WhatsApp
+
+ style="display: inline-block; background-color: var(--accent-blue); color: #000; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 20px; font-weight: 600;">Kirim Pesan</a></div>
+                </section>
+            </div>
+
+            <div class="right-panel">
+                <div class="stat-card"><p class="label">progres tugas css Selesai</p><div class="value">100%</div></div>
+                <div class="stat-card"><p class="label">tugas compilte</p><div class="value">2</div></div>
+                <div class="stat-card contact-info"><p class="label" style="font-size: 1em; color: #fff;">Info Cepat</p><p><i class="fas fa-map-marker-alt"></i> Lokasi: MANADO, Indonesia</p><p><i class="fas fa-clock"></i> Tersedia: Full-Time / Freelance</p></div>
+            </div>
+        </main>
+
+        <footer>
+            <a href="https://github.com/ryfaldy25rln-ship-it" target="_blank"><i class="fab fa-github"></i></a>
+            <a href="https://linkedin.com/in/namaanda" target="_blank"><i class="fab fa-linkedin"></i></a>
+            <a href="https://www.instagram.com/rey_nsru?igsh=MXg4enUwYjBnNmpsdw==" target="_blank"><i class="fab fa-instagram"></i></a>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('.tab-link');
+            const sections = document.querySelectorAll('.content-section');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    // 1. Hapus status 'active' dari semua tab dan konten
+                    tabs.forEach(t => t.classList.remove('active'));
+                    sections.forEach(s => s.classList.remove('active'));
+
+                    // 2. Tambahkan status 'active' ke tab yang diklik
+                    this.classList.add('active');
+
+                    // 3. Tampilkan konten yang sesuai
+                    const targetId = this.getAttribute('data-target');
+                    const targetSection = document.getElementById(targetId);
+                    if (targetSection) {
+                        targetSection.classList.add('active');
+                        // Pastikan area konten di-scroll ke atas setiap kali tab berubah
+                        document.querySelector('.content-area').scrollTop = 0;
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
